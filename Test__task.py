@@ -18,13 +18,11 @@ class RoomAction():
             self.lock_state = "закрыт"
         else:
             self.lock_state = "открыт"
-        print("Команды для двери: закрыть - закрывает дверь, открыть - открывает дверь")
-        print("Команды для замка двери: отпереть - отперает замок, запереть - запераает замок")
         print("\nДверь сейчас " + self.door_state + ", кстати замок на двери " + self.lock_state)
 
-    def state_door(self):    #генератор состояния двери и замка
-        self.random_state_door = door_action[randrange(0, len(door_action))]     # генерируем состояние двери
-        if self.random_state_door == door_action[1]:  # генерируем состояние Замка исходя из состояния двери
+    def state_door(self): #генератор состояния двери и замка
+        self.random_state_door = door_action[randrange(0, len(door_action))] # генерируем состояние двери
+        if self.random_state_door == door_action[1]: # генерируем состояние Замка исходя из состояния двери
             self.random_state_lock = lock_action[randrange(0, len(lock_action))]
         else:
             self.random_state_lock = lock_action[0]
