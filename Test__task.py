@@ -54,7 +54,7 @@ class RoomAction():
                             print("Вы заперли замок")
                         else:
                             print("Замок уже заперт")
-            else:
+            elif self.command != self.quit :
                 print("Введите корректную команду или выдите командой Выход")
 
 
