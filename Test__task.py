@@ -1,87 +1,65 @@
-from random import randrange
-
-door_action = ["открыть", "закрыть"] #статус и команды двери
-lock_action = ["отпереть", "запереть"] #статус и команды замка
-
-
 class RoomAction():
 
-    #сообщение состояния двери
-    def state_door_message(self, door_state, lock_state):
-        self.door_state = door_state
-        self.lock_state = lock_state
-        if self.door_state == door_action[0]:
-            self.door_state = "открыта"
-        else:
-            self.door_state = "закрыта"
-        if self.lock_state == lock_action[1]:
-            self.lock_state = "закрыт"
-        else:
-            self.lock_state = "открыт"
-        print("\nДверь сейчас " + self.door_state + ", кстати замок на двери " + self.lock_state)
+    def __init__(self):
+        self.door_action = ("открыть", "закрыть")  # статус и команды двери
+        self.lock_action = ("отпереть", "запереть")  # статус и команды замка
+        self.quit = "выход"
 
-    def state_door(self): #генератор состояния двери и замка
-        self.random_state_door = door_action[randrange(0, len(door_action))] # генерируем состояние двери
-        if self.random_state_door == door_action[1]: # генерируем состояние Замка исходя из состояния двери
-            self.random_state_lock = lock_action[randrange(0, len(lock_action))]
-        else:
-            self.random_state_lock = lock_action[0]
-        #показываем состояние двери
-        RoomAction.state_door_message(self, door_state=self.random_state_door, lock_state=self.random_state_lock)
+    def door_default_state(self, door, lock, quit):
+        self.door = door
+        self.lock = lock
+        self.quit = quit
+        print("Дверь сейчас открыта, замок на двери не заперт")
 
-    # ввод комманды для двери и вывод статуса
-    def door_command(self):
-        self.door= " "
-        while self.door not in door_action:
-            print("Введите корректную команду для двери")
-            self.door = str.lower(input())
-            if self.door in door_action:
-                if self.random_state_door == door_action[1] and self.random_state_door != self.door: # открываем закрытую дверь
-                    if self.random_state_lock == lock_action[0]:
-                        print("Дверь открыта!")
-                    else:
-                        print("Дверь закрыта на замок, увы!")
-                        continue
-                elif self.random_state_door == door_action[1] == self.door:
-                    print("Дверь и так закрыта, попробуй её открыть!")
-                    self.door = ""
-                elif self.random_state_door == door_action[0] and self.random_state_door != self.door:   # закрываем открытую дверь
-                    print("Вы закрыли дверь!")
-                else:
-                    print("Дверь и так открыта, попробуй её закрыть!")
-                    self.door = ""
+    def door_actions(self):
+        self.command = ""
+        while self.command != self.quit:
+            self.command = str.lower(input())
+
+            if self.command in self.door_action: #открываем дверь
+                if self.command == self.door_action[0] == self.door: #дверь открыта
+                    print("Дверь уже открыта")
+                elif self.command == self.door_action[0] != self.door: #дверь закрыта
+                    if self.lock == self.lock_action[0]: #замок открыт
+                        self.door = self.command
+                        print("Вы открыли дверь")
+                    else: #замок закрыт
+                        print("Дверь открыть нельзя, заперта на замок")
+                elif self.command == self.door_action[1] == self.door: #дверь закрыта
+                    print("Дверь уже закрыта")
+                elif self.command == self.door_action[1] != self.door:
+                    if self.lock == self.lock_action[0]: #замок открыт
+                        self.door = self.command
+                        print("Вы закрыли дверь")
+                    else: #замок закрыт
+                        print("Дверь уже закрыта")
+
+            elif self.command in self.lock_action: #открываем замок
+                if self.command == self.lock_action[0]: #команда отпереть
+                    if self.door == self.door_action[0]: #дверь открыта
+                        print("Открытую дверь нельзя отпереть")
+                    elif self.door == self.door_action[1]: #дверь закрыта
+                        if self.lock == self.lock_action[0]: #замок отперт
+                            print("Замок уже отперт")
+                        else:
+                            self.lock = self.command
+                            print("Вы отперли замок")
+                elif self.command == self.lock_action[1]: #команда запереть
+                    if self.door == self.door_action[0]: #дверь открыта
+                        print("Закрой дверь, чтобы Запереть замок")
+
+                    elif self.door == self.door_action[1]: #дверь закрыта
+                        if self.lock == self.lock_action[0]: #замок отперт
+                            self.lock = self.command
+                            print("Вы заперли замок")
+                        else:
+                            print("Замок уже заперт")
             else:
-                self.door = ""
-                print("Ошибка в команде двери")
+                print("Введите корректную команду или выдите командой Выход")
 
-
-    # ввод комманды для замка и вывод статуса
-    def lock_command(self):
-        self.lock = " "
-        while self.lock not in lock_action:
-            print("Введите корректную команду замка двери")
-            self.lock = str.lower(input())
-            if self.lock in lock_action:
-                if self.random_state_lock == lock_action[0] and self.random_state_lock != self.lock: #замок открыт
-                    if self.door == door_action[1]:
-                        print("Вы закрыли замок!")
-                    else:
-                        print("Дверь открыта, замок закрыть нельзя!")
-                elif self.random_state_lock == lock_action[0] == self.lock:
-                    print("Дверь уже отперта!")
-                if self.random_state_lock == lock_action[1] and self.random_state_lock != self.lock: #открываем закрытую дверь
-                    if self.door == door_action[0]:
-                        print("Вы отперли замок!")
-                    else:
-                        print("Дверь уже заперта, попробуй открыть замок!")
-                        self.lock = " "
-            else:
-                self.lock = ""
-                print("Ошибка в команде замка")
 
 
 room_class = RoomAction()
-room_class.state_door() #вызываем генерацию комнаты
-room_class.door_command() #вызываем функцию ввода состояния двери
-room_class.lock_command() #вызываем функцию ввода состояния замка
+room_class.door_default_state(room_class.door_action[0],room_class.lock_action[0], room_class.quit)
+room_class.door_actions()
 
