@@ -55,7 +55,7 @@ class RoomAction():
                         else:
                             print("Замок уже заперт")
             elif self.command != self.quit :
-                print("Введите корректную команду или выдите командой Выход")
+                raise print("Введена не верная команда для двери или замка")
 
 
 
